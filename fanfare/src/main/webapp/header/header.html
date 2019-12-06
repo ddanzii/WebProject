@@ -2,25 +2,131 @@
 <html>
 <head>
 <meta charset="UTF-8">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+var week = new Array('일', '월', '화', '수', '목', '금', '토');
+var today = new Date();
+var year = today.getFullYear();
+var month = today.getMonth() + 1;
+var day = today.getDate();
+var dayName = week[today.getDay()];
+console.log("현재 날짜는 %d-%d-%d %s요일 입니다.", year, month, day, dayName);
+var myElement = document.getElementById("myElementToday");
+myElement.innerHTML = year + "년 " + month + "월 " + day + "일 " + dayName + "요일";
+function getLocation() {
+	  if (navigator.geolocation) { // GPS를 지원하면
+	    navigator.geolocation.getCurrentPosition(function(position) {
+	     // alert(position.coords.latitude + ' ' + position.coords.longitude);
+	     reverseGeo(position.coords.longitude, position.coords.latitude);
+	    }, function(error) {
+	      console.error(error);
+	    }, {
+	      enableHighAccuracy: false,
+	      maximumAge: 0,
+	      timeout: Infinity
+	    });
+	  } else {
+	    alert('GPS를 지원하지 않습니다');
+	  }
+	}
+	getLocation();
+	
+	function reverseGeo(lon, lat){
+		$.ajax({
+			method:"GET",
+			url:"https://apis.openapi.sk.com/tmap/geo/reversegeocoding?version=1&format=json&callback=result", // ReverseGeocoding api 요청 url입니다.
+			async:false,
+			data:{
+				"coordType" : "WGS84GEO", //지구 위의 위치를 나타내는 좌표 타입
+				"lon" : lon,
+				"lat" : lat,
+				"appKey" : "a7786e25-e2b0-4fba-a5ca-b26eefba7f35", //실행을 위한 키 입니다. 발급받으신 AppKey(appKey)를 입력하세요.
+			},
+			//데이터 로드가 성공적으로 완료되었을 때 발생하는 함수입니다.
+			success:function(response){
+				prtcl = response;
+				
+				// 3. json에서 주소 파싱
+				var arrResult = prtcl.addressInfo;
+				
+				//법정동 마지막 문자 
+				var lastLegal = arrResult.legalDong.charAt(arrResult.legalDong.length-1);
+				
+				// 새주소
+				newRoadAddr = arrResult.city_do + ' ' + arrResult.gu_gun + ' '; 
+				
+				if(arrResult.eup_myun == '' && (lastLegal=="읍"||lastLegal=="면")){//읍면
+					newRoadAddr +=  arrResult.legalDong;	
+				}else{
+					newRoadAddr +=  arrResult.eup_myun;
+				}
+				newRoadAddr += ' ' +arrResult.roadName + ' ' + arrResult.buildingIndex;
+				
+				// 새주소 법정동& 건물명 체크
+				if(arrResult.legalDong != '' && (lastLegal!="읍"&&lastLegal!="면")){//법정동과 읍면이 같은 경우
+					
+					if(arrResult.buildingName != ''){//빌딩명 존재하는 경우
+						newRoadAddr +=  (' (' + arrResult.legalDong + ', ' +arrResult.buildingName +') ');
+					}else{
+						newRoadAddr += (' (' + arrResult.legalDong + ')');
+					}
+				}else if(arrResult.buildingName != ''){//빌딩명만 존재하는 경우
+					newRoadAddr +=  (' (' + arrResult.buildingName +') ');
+				}
+				
+				// 구주소
+				jibunAddr = arrResult.city_do + ' ' + arrResult.gu_gun + ' ' + arrResult.legalDong + ' '+ arrResult.ri + ' ' + arrResult.bunji;
+				//구주소 빌딩명 존재
+				if(arrResult.buildingName != ''){//빌딩명만 존재하는 경우
+					jibunAddr +=  (' '+arrResult.buildingName);
+				}
+				
+				result="새주소 : "+newRoadAddr+"</br>";
+				result+="지번주소 : "+jibunAddr+"</br>"; 
+				result+="위경도좌표 : "+lat+", "+lon;
+				
+				var resultDiv = document.getElementById("mylocationElement");//결과를 출력할 태그를 찾습니다.
+				resultDiv.innerHTML = result;//결과를 html에 출력합니다.
+			},
+			//요청 실패시 콘솔창에서 에러 내용을 확인할 수 있습니다.
+			error:function(request,status,error){
+				console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+			}
+		});
+		
+	}	
+</script>
 </head>
 <body>
 
-<table>
-	<tr>
-		<td><a>main&nbsp;&nbsp;|&nbsp;&nbsp;</a></td>
-		<td><a>login&nbsp;&nbsp;|&nbsp;&nbsp;</a></td>
-		<td><a>È¸¿ø°¡ÀÔ&nbsp;&nbsp;|&nbsp;&nbsp;</a></td>
-		<td><a>¸¶ÀÌÆäÀÌÁö&nbsp;&nbsp;|&nbsp;&nbsp;</a></td>
-	</tr>
-</table>
+	<table>
+		<tr>
+			<td><a>main&nbsp;&nbsp;|&nbsp;&nbsp;</a></td>
+			<td><a>login&nbsp;&nbsp;|&nbsp;&nbsp;</a></td>
+			<td><a>login2&nbsp;&nbsp;|&nbsp;&nbsp;</a></td>
+			<td><a>login3&nbsp;|&nbsp;&nbsp;</a></td>
+		</tr>
+	</table>
 
-<img alt="logo" src="ol.jpg">
-<a style="font-size: large;" href="../index.html">FAN FARE</a>
-<form>
-<input type="text" id="searchInput" name="searchInput" value="¸ÅÀå¸í ¶Ç´Â »§ ÀÌ¸§À» °Ë»öÇÏ¼¼¿ä." />
-<input type="button" id="btnSearch" name="btnSearch" />
-</form>
+	<img alt="logo" src="../img/bread.jpg">
+	<!-- controller의 img 파일불러오는 링크를 통해 img 불러왔음, 파일경로랑 다름! -->
+	<a style="font-size: large;" href="../index.html">FAN FARE</a>
+	<form>
+		<input type="text" id="searchInput" name="searchInput"
+			value="버튼" /> <input type="button"
+			id="btnSearch" name="btnSearch" />
+	</form>
 
+	<br>
+	
+	<span id="myElementToday">span영역</span>
+	
+	
+	현재 위치 : 
+	<span id="mylocationElement"></span>
+	
+	
 
 </body>
 </html>

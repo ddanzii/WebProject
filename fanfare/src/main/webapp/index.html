@@ -3,12 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body>
-<table style="width:100%">
-	<tr style="height:20%"><td>header</td></tr>
-	<tr style="height:80%"><td>body</td></tr>
-	
-</table>
+	<table style="width: 100%">
+		<tr style="height: 20%">
+			<td id="header"></td>
+		</tr>
+		<tr style="height: 80%">
+			<td>body</td>
+		</tr>
+
+	</table>
+	<script type="text/javascript">
+		$(document).ready(function() { //android onResune() : 화면에 표시되기 바로 직전
+			$("#header").load("/header"); //화면에 표시되자마자 window.onLoad(js)
+
+			//~이렇게 한줄만 해주면 알아서 contents에 testContents.html파일을 넣어 준다.
+
+		});
+	</script>
 </body>
 </html>

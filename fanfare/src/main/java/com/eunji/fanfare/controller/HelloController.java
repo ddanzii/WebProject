@@ -1,23 +1,17 @@
 package com.eunji.fanfare.controller;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Locale;
-
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.springframework.hateoas.MediaTypes;
+import org.springframework.boot.context.ConfigurationWarningsApplicationContextInitializer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.MimeTypeUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,8 +36,7 @@ public class HelloController {
 	@RequestMapping("/user")
 	@ResponseBody //데이터 (= body) 
 	public String getUser() throws IOException {
-		UserVO uservo = mainService.getUser();
-		return new Gson().toJson(uservo);
+		return mainService.getUser();
 	}
 	@RequestMapping("/header")
 	public ModelAndView header(ModelAndView mv) throws IOException {
@@ -51,17 +44,26 @@ public class HelloController {
 		return mv;
 	}
 	
-	@RequestMapping(value = "/img", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> imgpath(@RequestParam("path") String fileName) throws Exception {
+	@RequestMapping("/body")
+	public ModelAndView body(ModelAndView mv) throws IOException {
+		mv.setViewName("/body/body.html");
+		return mv;
+	}
+	
+	@RequestMapping(value = "/img/{path}", method = RequestMethod.GET) //{path} : key 파라미터로 던질 -> jpg path를 값으로 url에 
+	public ResponseEntity<byte[]> imgpath(@PathVariable String path) throws Exception {
+		File file = new File("./src/main/webapp/img/");
+		path = file.getAbsolutePath()+File.separator+path;
+		System.out.println("fileName : "+ path);
 		MediaType mType = MediaType.IMAGE_JPEG;
 		HttpHeaders headers = new HttpHeaders();
-		InputStream in = new FileInputStream(fileName);
+		InputStream in = new FileInputStream(path);
 		
 		if(mType != null) {
 			headers.setContentType(mType);
 		} else {
 			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-			headers.add("Content-Disposition", "attachment; fileName=\"" + new String(fileName.getBytes("UTF-8"), "ISO-8859-1")); 
+			headers.add("Content-Disposition", "attachment; fileName=\"" + new String(path.getBytes("UTF-8"), "ISO-8859-1")); 
 		}
 		byte[] buffer = new byte[in.available()];
 		IOUtils.readFully(in, buffer);

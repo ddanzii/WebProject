@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+$.ajax({
+	method:"GET",
+	url:"http://localhost:8082/user", // ReverseGeocoding api 요청 url입니다.
+	async:false,
+	data:{
+	},
+	success:function(response){
+		console.log("success : " + response);
+	}
+	,
+	error:function(request,status,error){
+		console.log("error : " + request + status + error);
+	}
+});
+
+</script>
+
+
+</body>
+</html>
