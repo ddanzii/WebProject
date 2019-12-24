@@ -8,7 +8,14 @@
     FROM
       userinfo
    </select>
-   
+
+	<select id="getStore" resultType="com.eunji.fanfare.vo.StoreVO">
+    SELECT
+      *
+    FROM
+      STORE
+   </select>
+	   
  
  </mapper>
 

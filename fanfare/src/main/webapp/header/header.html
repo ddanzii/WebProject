@@ -2,19 +2,120 @@
 <html>
 <head>
 <meta charset="UTF-8">
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script type="text/javascript">
-var week = new Array('일', '월', '화', '수', '목', '금', '토');
-var today = new Date();
-var year = today.getFullYear();
-var month = today.getMonth() + 1;
-var day = today.getDate();
-var dayName = week[today.getDay()];
-console.log("현재 날짜는 %d-%d-%d %s요일 입니다.", year, month, day, dayName);
-var myElement = document.getElementById("myElementToday");
-myElement.innerHTML = year + "년 " + month + "월 " + day + "일 " + dayName + "요일";
-function getLocation() {
+<script	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link href="http://fonts.googleapis.com/earlyaccess/notosanskr.css" rel="stylesheet">
+<style>
+.fontkr {
+	font-family: 'Noto Sans KR', sans-serif;
+}
+.topmenu {
+	cursor: pointer;
+	font-size:small;
+	font-family: 'Noto Sans KR', sans-serif;
+}
+a:link {
+	color:black;
+	text-decoration: none;
+}
+a:visited {
+	color:black;
+	text-decoration: none;
+}
+a:active {
+	color:black;
+	text-decoration: none;
+}
+.sitename {
+	font-weight: bolder;
+	font-size: 2.5em;
+	padding-left: 20px;
+}
+.searchinput {
+	padding-left: 100px;
+	width: 50%;
+}
+.searchinput>input {
+	width: 300px;
+	color: gray;
+}
+#datespan {
+	font-family: 'Noto Sans KR', sans-serif;
+	margin-left: 200px;
+	margin-right: 30px;
+}
+#gpsspan {
+	font-family: 'Noto Sans KR', sans-serif;
+	margin-left: 5px;
+}
+hr {
+	margin-left: 200px;
+	margin-right: 200px;
+	color: gray;
+}
+button.noline {
+	margin:0px;
+	border: 0px; 
+	background-color: white;
+}
+button.line {
+	border-radius: 5px;
+	background-color: white;
+}
+</style>
+ 
+</head>
+<body>
+	<!-- <h2>header 부분</h2> -->
+	<!-- menu -->
+	<table class="topmenu_wrapper" align="right" style="padding-right: 200px; padding-top: 10px;">
+		<tr>
+			<td class="topmenu"><a href="../">main</a></td>
+			<td style="font-size:small;">&nbsp;&nbsp;|&nbsp;&nbsp;</td>
+			<td class="topmenu">로그인</td>
+			<td style="font-size:small;">&nbsp;&nbsp;|&nbsp;&nbsp;</td>
+			<td class="topmenu">회원가입</td>
+			<td style="font-size:small;">&nbsp;&nbsp;|&nbsp;&nbsp;</td>
+			<td class="topmenu">마이페이지</td>
+		</tr>
+	</table>
+	
+	<!-- 로고 -->
+	<table style="padding-top: 40px; padding-left: 200px;">
+		<tr>
+			<!-- <td><img src="../img/bread100.jpg" alt="logo" /></td> -->
+			<td><button type="button" class="noline" id="logobtn" onclick="location.href='../'"><img alt="logo" src="../img/bread100.jpg"></button></td>
+			<td class="sitename"><a href="../">Fan Fare</a></td>
+			<td class="searchinput" align="center"><input type="text" value="매장명 또는 빵 이름을 검색해주세요." onfocus="this.value=''"/></td>
+			<td><button type="button" class="line" id="searchbtn" onclick=""><img alt="search" src="../img/search16.jpg"></button></td>
+		</tr>
+	</table>
+	<br><br>
+	
+	<span id="datespan">날짜날짜</span> <!-- 날짜 표시될 span 영역 -->
+	<span class="fontkr" >현재 위치 : </span> 
+	<span id="gpsspan">위치위치</span> <!-- 위치 표시될 span 영역 -->
+	<span id="locationplus"><input type="button" id="locplusbtn" value="+"></span>
+	
+	<!-- body 구분짓는 라인 --><hr>
+	
+	<script type="text/javascript">
+	// 요일 띄우기
+	var week = new Array('일', '월', '화', '수', '목', '금', '토');
+	var today = new Date();
+	var year = today.getFullYear();
+	var month = today.getMonth() + 1;
+	var day = today.getDate();
+	var dayName = week[today.getDay()];
+	console.log("현재 날짜는 %d-%d-%d %s요일 입니다.", year, month, day, dayName);
+	
+	var dateElement = document.getElementById("datespan");
+	console.log(dateElement);
+	dateElement.innerHTML = year + "." + month + "." + day + "&nbsp;&nbsp;&nbsp;" + dayName + "요일";
+	</script>
+	
+	<script type="text/javascript">
+	// 위치 띄우기
+	function getLocation() {
 	  if (navigator.geolocation) { // GPS를 지원하면
 	    navigator.geolocation.getCurrentPosition(function(position) {
 	     // alert(position.coords.latitude + ' ' + position.coords.longitude);
@@ -65,7 +166,6 @@ function getLocation() {
 				
 				// 새주소 법정동& 건물명 체크
 				if(arrResult.legalDong != '' && (lastLegal!="읍"&&lastLegal!="면")){//법정동과 읍면이 같은 경우
-					
 					if(arrResult.buildingName != ''){//빌딩명 존재하는 경우
 						newRoadAddr +=  (' (' + arrResult.legalDong + ', ' +arrResult.buildingName +') ');
 					}else{
@@ -82,11 +182,12 @@ function getLocation() {
 					jibunAddr +=  (' '+arrResult.buildingName);
 				}
 				
-				result="새주소 : "+newRoadAddr+"</br>";
+				/* result="새주소 : "+newRoadAddr+"</br>";
 				result+="지번주소 : "+jibunAddr+"</br>"; 
-				result+="위경도좌표 : "+lat+", "+lon;
+				result+="위경도좌표 : "+lat+", "+lon; */
+				result = jibunAddr + " "; 
 				
-				var resultDiv = document.getElementById("mylocationElement");//결과를 출력할 태그를 찾습니다.
+				var resultDiv = document.getElementById("gpsspan");//결과를 출력할 태그를 찾습니다.
 				resultDiv.innerHTML = result;//결과를 html에 출력합니다.
 			},
 			//요청 실패시 콘솔창에서 에러 내용을 확인할 수 있습니다.
@@ -94,39 +195,9 @@ function getLocation() {
 				console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
 			}
 		});
-		
 	}	
-</script>
-</head>
-<body>
-
-	<table>
-		<tr>
-			<td><a>main&nbsp;&nbsp;|&nbsp;&nbsp;</a></td>
-			<td><a>login&nbsp;&nbsp;|&nbsp;&nbsp;</a></td>
-			<td><a>login2&nbsp;&nbsp;|&nbsp;&nbsp;</a></td>
-			<td><a>login3&nbsp;|&nbsp;&nbsp;</a></td>
-		</tr>
-	</table>
-
-	<img alt="logo" src="../img/bread.jpg">
-	<!-- controller의 img 파일불러오는 링크를 통해 img 불러왔음, 파일경로랑 다름! -->
-	<a style="font-size: large;" href="../index.html">FAN FARE</a>
-	<form>
-		<input type="text" id="searchInput" name="searchInput"
-			value="버튼" /> <input type="button"
-			id="btnSearch" name="btnSearch" />
-	</form>
-
-	<br>
-	
-	<span id="myElementToday">span영역</span>
-	
-	
-	현재 위치 : 
-	<span id="mylocationElement"></span>
-	
-	
-
+	</script>
+		
 </body>
+
 </html>

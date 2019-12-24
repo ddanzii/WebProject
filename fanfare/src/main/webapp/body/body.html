@@ -5,26 +5,91 @@
 <title>Insert title here</title>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<style type="text/css">
+.card-store {
+	position : relative;
+	width: 220px;
+	height: 360px;
+	display: inline-block;
+	margin-right: 5px;
+	margin-top: 5px;
+	margin-left: 5px;
+	padding: 10px 15px;
+}
+</style>
+
 </head>
 <body>
+
+<span id="backspan"></span>
+
 <script type="text/javascript">
+
+var storeform = "";
+
 $.ajax({
 	method:"GET",
-	url:"http://localhost:8082/user", // ReverseGeocoding api 요청 url입니다.
+	url:"http://localhost:8082/storeform", // ReverseGeocoding api 요청 url입니다.
 	async:false,
 	data:{
 	},
 	success:function(response){
-		console.log("success : " + response);
-	}
-	,
+		storeform = response;
+		$.ajax({
+			method:"GET",
+			url:"http://localhost:8082/store", // ReverseGeocoding api 요청 url입니다.
+			async:false,
+			data:{
+			},
+			success:function(response){
+				console.log("success : " + response);
+				var jsonarr = JSON.parse(response);
+				items(jsonarr);
+				
+			},
+			error:function(request,status,error){
+				console.log("error : " + request + status + error);
+			}
+		});
+	},
 	error:function(request,status,error){
 		console.log("error : " + request + status + error);
 	}
 });
 
+function items(json) {
+	 for(var i=0; i<json.length; i++) {
+		$("body").append("<div class='card-store' id='breadstorecard" + i + "' ></div>");
+		//function(responseTxt, statusTxt, xhr)
+		$("#breadstorecard" + i).html(storeform);
+		$("#breadstorecard" + i).children("#storeimg").attr('src', json[i].s_image);
+		$("#breadstorecard" + i).children("#storename").text(json[i].s_name);
+		$("#breadstorecard" + i).children("#storetel").text(json[i].s_phone);
+		console.log("i : " + i + " s_image : " + json[i].s_image);
+	}  
+
+	//url, data, callback -> GET방식 data 생략, POST일땐 data 필요, callback도 생략가능, url만 있으면 해당 html만 보여줌
+	//callback : 결과 함수, android async onpost와 동일
+	 /*for(var i=0; i<10; i++) {
+		$("body").append("<div class='card-store' id='breadstorecard" + i + "' ></div>");
+		//function(responseTxt, statusTxt, xhr)
+		 $("#breadstorecard" + i).load("../storeform", function(responseTxt, statusTxt, xhr) {//load 이후 어떤 작업을 할지
+			if(statusTxt == "success"){
+				console.log("i : "+i);
+				$("#storeimg").attr('src', json[i].s_image);
+				$("#storename").text(json[i].s_name);
+				$("#storetel").text(json[i].s_phone);
+				//maxsale, bread1, bread2
+			} else if(statusTxt == "error") {
+				
+			}
+		}); //breadstoreform을 load -> 이 파일 안의 id를 사용할 수 있다. 
+		//$("#breadstorecard" + i).html("<link href='../storeform' />");
+		$("#breadstorecard" + i).html("<link href='../storeform' />");
+	} 
+*/
+}
 </script>
-
-
+<span style="width: 100%"></span>
 </body>
 </html>

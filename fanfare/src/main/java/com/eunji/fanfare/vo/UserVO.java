@@ -7,5 +7,5 @@ public class UserVO {
 	public String u_id;
 	public String u_pw;
 	public String u_hp;
-	
+	public String a_addr;
 }

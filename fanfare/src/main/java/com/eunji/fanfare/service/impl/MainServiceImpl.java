@@ -18,4 +18,9 @@ public class MainServiceImpl implements MainService {
 		return new Gson().toJson(mainRepository.getUser());
 	}
 
+	@Override
+	public String getStore() {
+		return new Gson().toJson(mainRepository.getStore());
+	}
+
 }

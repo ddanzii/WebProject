@@ -38,6 +38,13 @@ public class HelloController {
 	public String getUser() throws IOException {
 		return mainService.getUser();
 	}
+	
+	@RequestMapping("/store")
+	@ResponseBody //데이터 (= body) 
+	public String getStore() throws IOException {
+		return mainService.getStore();
+	}
+	
 	@RequestMapping("/header")
 	public ModelAndView header(ModelAndView mv) throws IOException {
 		mv.setViewName("/header/header.html");
@@ -47,6 +54,18 @@ public class HelloController {
 	@RequestMapping("/body")
 	public ModelAndView body(ModelAndView mv) throws IOException {
 		mv.setViewName("/body/body.html");
+		return mv;
+	}
+
+	@RequestMapping("/userjoin")
+	public ModelAndView userjoin(ModelAndView mv) throws IOException {
+		mv.setViewName("/body/joinform.html");
+		return mv;
+	}
+	
+	@RequestMapping(value="/storeform")
+	public ModelAndView item(ModelAndView mv) throws IOException {
+		mv.setViewName("/body/breadstoreform.html");
 		return mv;
 	}
 	
