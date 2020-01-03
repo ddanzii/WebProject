@@ -8,6 +8,13 @@
     FROM
       userinfo
    </select>
+   
+   <select id="getUsers" resultType="com.eunji.fanfare.vo.UserVO">
+    SELECT
+      *
+    FROM
+      userinfo
+   </select>
 
 	<select id="getStore" resultType="com.eunji.fanfare.vo.StoreVO">
     SELECT
@@ -15,7 +22,14 @@
     FROM
       STORE
    </select>
-	   
+
+	<insert id="setUser" parameterType="com.eunji.fanfare.vo.UserVO">
+	insert into userinfo values(#{u_id}, #{u_pw}, #{u_hp})
+	</insert>
+	<insert id="setUserAddr" parameterType="com.eunji.fanfare.vo.UserVO">
+	insert into user_addr values(#{u_id}, '집', #{a_addr}, 1)
+	</insert>
+	
  
  </mapper>
 

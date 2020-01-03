@@ -22,5 +22,22 @@ public class MainServiceImpl implements MainService {
 	public String getStore() {
 		return new Gson().toJson(mainRepository.getStore());
 	}
+	
+	@Override
+	public int setUser(UserVO uvo) {
+		return mainRepository.setUser(uvo);
+	}
+
+	@Override
+	public int setUserAddr(UserVO uvo) {
+		return mainRepository.setUserAddr(uvo);
+		
+	}
+
+	@Override
+	public boolean checkId(UserVO uvo) {
+		return mainRepository.getUsers().contains(uvo);
+	}
+	
 
 }

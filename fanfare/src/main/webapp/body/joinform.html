@@ -111,17 +111,23 @@ td input {
 
 <script type="text/javascript">
 function transjoinform() {
+	var data = JSON.stringify({
+		"u_id" : $("#u_id").val(),
+		"u_pw" : $("#u_pw").val(),
+		"u_hp" : $("#u_hp").val(),
+		"a_addr" : $("#u_roadAddress").val() + " " + $("#u_detailAddress").val()
+		});
+	console.log(data);
 	$.ajax({
 		method:"POST",
 		url:"./userjoin", // ReverseGeocoding api 요청 url입니다.
 		async:false,
 		data:{
-			"u_id" : $("#u_id").val(),
-			"u_pw" : $("#u_pw").val(),
-			"u_hp" : $("#u_hp").val(),
-			"a_addr" : $("#u_roadAddress").val() + " " + $("#u_detailAddress").val()
+			"data" : data
 		},
 		success:function(response){
+			console.log("res : " + response);
+			
 		},
 		error:function(request,status,error){
 			console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
@@ -133,13 +139,38 @@ function idchecker() {
 	//데이터 검증
 	//id : 6글자~20글자, 허용범위 : 영어, 숫자, _, 시작문자 소문자
 	var uidErrMsgLine = document.getElementById("idErrorMsg");
+	var uid = $("#u_id").val();
 	
 	var uidcheck = /^[a-z]{1}[A-Za-z0-9_]{5,19}$/;  
-	console.log("id : " + $("#u_id").val());
-	console.log("id check : " + uidcheck.test($("#u_id").val()));
-	if (uidcheck.test($("#u_id").val())) {
+	console.log("id : " + uid);
+	console.log("id check : " + uidcheck.test(uid));
+	if (uidcheck.test(uid)) {
 		//alert("ID 적합");
-		uidErrMsgLine.hidden = true;
+		//id 체크하는 ajax 호출
+		$.ajax({
+			method:"GET",
+			url:"./user/"+uid,
+			async : false,
+			data:{
+				
+			},
+			success:function(response) {
+				console.log(response);
+				var responseResult = JSON.parse(response);
+				if (responseResult.result) {
+					uidErrMsgLine.innerHTML = "이미 존재하는 ID입니다.";
+				} else {
+					uidErrMsgLine.innerHTML = "사용 가능합니다.";
+				}
+
+				uidErrMsgLine.hidden = false;
+			},
+			error:function(request,status,error) {
+
+				console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+			}
+		});
+		uidErrMsgLine.hidden = false;
 	} else {
 		//alert("ID 부적합");
 		//$("#idErrorMsg").val("아이디가 적합하지 않습니다.");

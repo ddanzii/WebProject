@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
+
 import javax.annotation.Resource;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.boot.context.ConfigurationWarningsApplicationContextInitializer;
@@ -12,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,10 +60,22 @@ public class HelloController {
 		return mv;
 	}
 
-	@RequestMapping("/userjoin")
+	@RequestMapping(value="/userjoin")
 	public ModelAndView userjoin(ModelAndView mv) throws IOException {
 		mv.setViewName("/body/joinform.html");
 		return mv;
+	}
+	
+	@RequestMapping(value="/userjoin", method=RequestMethod.POST)
+	public String userjoin(@RequestBody String joindata) throws IOException {
+		String decodeResult = URLDecoder.decode(joindata, "UTF-8");
+		System.out.println("joindata : " + decodeResult);
+		
+		UserVO uvo = new Gson().fromJson(decodeResult.substring(5), UserVO.class);
+		int insertResult = mainService.setUser(uvo);
+		int insertAddrResult = mainService.setUserAddr(uvo);
+		System.out.println(insertResult);
+		return "{'result':"+insertResult+", 'addrresult':" + insertAddrResult +"}";
 	}
 	
 	@RequestMapping(value="/storeform")
@@ -89,5 +104,13 @@ public class HelloController {
 		return new ResponseEntity<byte[]>(buffer, headers, HttpStatus.CREATED);
 	}
 	
+	//id체크하는 
+	@RequestMapping(value = "/user/{u_id}", method = RequestMethod.GET)
+	@ResponseBody
+	public String checkId(@PathVariable String u_id) throws Exception {
+		UserVO uvo = new UserVO();
+		uvo.u_id = u_id;
+		return "{\"result\":"+mainService.checkId(uvo)+"}";
+	}
 	
 }
